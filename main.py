@@ -3,21 +3,18 @@ from selenium import webdriver
 import os
 from datetime import datetime
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 from slack import WebClient
 from slack.errors import SlackApiError
-from secret import SLACK_API_TOKEN, URL, CHANNEL_ID
-
-# keyboard = Controller()
-from selenium.webdriver.support.ui import WebDriverWait
+from secret import SLACK_API_TOKEN, URL, CHANNEL_ID, USER_ID
 
 client = WebClient(token=SLACK_API_TOKEN)
-
-
 def slack_message(message):
     try:
         response = client.chat_postMessage(
             channel=CHANNEL_ID,
-            text=message
+            text=message,
+            user=USER_ID
         )
     except SlackApiError as e:
         assert e.response["error"]
@@ -25,11 +22,11 @@ def slack_message(message):
 
 
 openDays = ["20200824", "20200825", "20200826", "20200827", "20200828",
-            "20200901", "20200902", "20200903", "20200904"]
+            "20200831","20200901", "20200902", "20200903", "20200904"]
 
-# openHours = ["15:15", "16:30","17:45" ]
-openHours = ["16:30", "18:00"]
-# Patters
+openHours = ["16:30","17:45" ]
+# openHours = ["16:30", "18:00"]
+# Patterns
 showMoreSelector = '/html/body/div[1]/div[3]/div[2]/div[1]/div/div/button'
 bookingSelector = '/html/body/div[1]/div[4]/div[3]/div/a[1]'
 locationSelector = '/html/body/div[1]/div[4]/div[3]/div/div/div/form/div[2]/div[1]/select/option[2]'
@@ -108,5 +105,5 @@ while True:
     for message in messages:
         slack_message(message)
 
-    print("Next research in 30mn")
+    print("10 minutes before next search...")
     sleep(1800)
