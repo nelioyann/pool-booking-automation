@@ -12,7 +12,7 @@ from secret import SLACK_API_TOKEN, URL, CHANNEL_ID, USER_ID
 # Setting Up Slack API
 client = WebClient(token=SLACK_API_TOKEN)
 
-
+interval = 30 #in minutes
 def slack_message(message):
     try:
         response = client.chat_postMessage(
@@ -29,11 +29,11 @@ def slack_message(message):
 # My availability
 openDays = ["20200824", "20200825", "20200826", "20200827", "20200828",
             "20200831","20200901", "20200902", "20200903", "20200904"]
-openHours = ["17:45" ]
+openHours = ["17:45","11:00","14:00", "18:00" ]
 
 
 # Patterns
-showMoreSelector = '/html/body/div[1]/div[3]/div[2]/div[1]/div/div/button'
+showMoreSelector = '/html/body/div[1]/div[3]/div[2]/div[3]/div/div/button'
 bookingSelector = '/html/body/div[1]/div[4]/div[3]/div/a[1]'
 locationSelector = '/html/body/div[1]/div[4]/div[3]/div/div/div/form/div[2]/div[1]/select/option[2]'
 datesSelector = '#dates option:not([disabled])'
@@ -116,5 +116,5 @@ while True:
         slack_message(message)
 
     # os.system("cls")
-    print("10 minutes before next search...")
-    sleep(600)
+    print(f"{interval} minutes before next search...")
+    sleep(interval * 60)
