@@ -8,7 +8,11 @@ from slack import WebClient
 from slack.errors import SlackApiError
 from secret import SLACK_API_TOKEN, URL, CHANNEL_ID, USER_ID
 
+
+# Setting Up Slack API
 client = WebClient(token=SLACK_API_TOKEN)
+
+
 def slack_message(message):
     try:
         response = client.chat_postMessage(
@@ -16,16 +20,18 @@ def slack_message(message):
             text=message,
             user=USER_ID
         )
+        # print(response)
+        return response #only prevents warning
     except SlackApiError as e:
         assert e.response["error"]
 
 
-
+# My availability
 openDays = ["20200824", "20200825", "20200826", "20200827", "20200828",
             "20200831","20200901", "20200902", "20200903", "20200904"]
+openHours = ["17:45" ]
 
-openHours = ["16:30","17:45" ]
-# openHours = ["16:30", "18:00"]
+
 # Patterns
 showMoreSelector = '/html/body/div[1]/div[3]/div[2]/div[1]/div/div/button'
 bookingSelector = '/html/body/div[1]/div[4]/div[3]/div/a[1]'
@@ -43,19 +49,18 @@ while True:
 
     try:
         # Open the target URL
-        slack_message("===Checking available pool slots===")
+        print("Sending notification to Slack...")
+        slack_message("🏊 Checking available slots 🏊")
         messages = []
-
-        print("Phone notified")
-
+        print("Opening the reservation website...")
         browser.get(URL)
         sleep(delay)
-        print("Website launched")
-        # Select a pool
+
+        # Selecting a pool
         poolElement = browser.find_element(By.XPATH, showMoreSelector)
         sleep(delay)
         poolElement.click()
-        print("Pool selected \n")
+        print("Choosing my prefered pool... \n")
         sleep(delay)
 
         # Click to start the reservation process
@@ -63,7 +68,7 @@ while True:
         sleep(delay)
         bookingElement.click()
         sleep(delay)
-        print("Exploring available slots")
+        print("Exploring available slots...")
 
         # Select the right municipality
         locationElement = browser.find_element(By.XPATH, locationSelector)
@@ -81,10 +86,9 @@ while True:
             if (date in openDays):
                     time = datetime(int(date[:4]), int(
                         date[4:6]), int(date[6:8])).strftime("%B %d")
-                    print(time)
-                    # print(date[:4], date[4:6], date[6:8])
-                    # print(date)
+                    # print(time)
                     sleep(delay)
+
                     # Select hours slots
                     hourElements = browser.find_elements(
                         By.CSS_SELECTOR, hoursSelector)
@@ -92,18 +96,20 @@ while True:
                         # print(hourElement)
                         hour = hourElement.get_attribute("value")
                         if (hour in openHours):
-                            messages.append(f'the {hour} slot is available on {time}')
-                            print(f'Available on {time} at {hour}')
+                            messages.append(f'{time} at {hour} ✅')
+                            print(f'{time} at {hour} slot available')
     except:
         print("an error occured")
 
     finally:
-        sleep(5)
+        sleep(delay)
         browser.quit()
 
-    print("\n Sending notifications available slots on Slack")
+    print("\nSending available slots to Slack...")
+
     for message in messages:
         slack_message(message)
 
+    os.system("cls")
     print("10 minutes before next search...")
-    sleep(1800)
+    sleep(600)
