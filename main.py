@@ -60,7 +60,7 @@ while True:
         poolElement = browser.find_element(By.XPATH, showMoreSelector)
         sleep(delay)
         poolElement.click()
-        print("Choosing my prefered pool... \n")
+        print("Selecting prefered pool... \n")
         sleep(delay)
 
         # Click to start the reservation process
@@ -80,6 +80,7 @@ while True:
         dateElements = browser.find_elements(By.CSS_SELECTOR, datesSelector)
         sleep(delay)
         for dateElement in dateElements:
+
             dateElement.click()
             # Filter the ones that concord with current availabity
             date = dateElement.get_attribute("value")
@@ -98,6 +99,8 @@ while True:
                         if (hour in openHours):
                             messages.append(f'{time} at {hour} ✅')
                             print(f'{time} at {hour} slot available')
+            
+
     except:
         print("an error occured")
 
@@ -107,9 +110,11 @@ while True:
 
     print("\nSending available slots to Slack...")
 
+    if (len(messages) == 0):
+        messages.append(f'404 water not found 😥')
     for message in messages:
         slack_message(message)
 
-    os.system("cls")
+    # os.system("cls")
     print("10 minutes before next search...")
     sleep(600)
