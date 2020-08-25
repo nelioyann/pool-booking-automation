@@ -49,8 +49,7 @@ while True:
 
     try:
         # Open the target URL
-        print("Sending notification to Slack...")
-        slack_message("🏊 Checking available slots 🏊")
+        # print("Sending notification to Slack...")
         messages = []
         print("Opening the reservation website...")
         browser.get(URL)
@@ -86,7 +85,7 @@ while True:
             date = dateElement.get_attribute("value")
             if (date in openDays):
                     time = datetime(int(date[:4]), int(
-                        date[4:6]), int(date[6:8])).strftime("%B %d")
+                        date[4:6]), int(date[6:8])).strftime("%a %B %d")
                     # print(time)
                     sleep(delay)
 
@@ -110,10 +109,11 @@ while True:
 
     print("\nSending available slots to Slack...")
 
-    if (len(messages) == 0):
-        messages.append(f'404 water not found 😥')
-    for message in messages:
-        slack_message(message)
+    if (len(messages) != 0):
+        # messages.append(f'404 water not found 😥')
+        slack_message("🏊 Checking available slots 🏊")
+        for message in messages:
+            slack_message(message)
 
     # os.system("cls")
     print(f"{interval} minutes before next search...")
